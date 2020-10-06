@@ -1,0 +1,23 @@
+{
+  "name": "hackmore",
+  "version": "1.1.1",
+  "description": "for hackoctober fest",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VlaD77/hacktoberfest2020.git"
+  },
+  "author": "vlad_77",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VlaD77/hacktoberfest2020/issues"
+  },
+  "homepage": "https://github.com/VlaD77/hacktoberfest2020#readme",
+  "dependencies": {
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1"
+  }
+}
