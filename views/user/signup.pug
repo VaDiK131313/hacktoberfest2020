@@ -1,0 +1,23 @@
+extends ../layouts/bootstrap
+
+append styles
+    // Custom styles for this template
+    link(href='../../css/signin.css', rel='stylesheet')
+block body
+    .container
+        form.form-signin(method='post')
+            h2.form-signin-heading Sign Up
+            if errors
+                for message in errors
+                    div.alert.alert-warning
+                        strong=message
+            label.sr-only(for='name') Name
+            input#name.form-control(type='text',name='name', placeholder='Your Name', required='', autofocus='')
+            label.sr-only(for='email') Email address
+            input#email.form-control(type='email',name='email', placeholder='Email address', required='')
+            label.sr-only(for='password') Password
+            input#password.form-control(type='password',name='password', placeholder='Password', required='')
+            label.sr-only(for='password2') Repeat password
+            input#password2.form-control(type='password',name='password2', placeholder='Repeat password', required='')
+
+            button.btn.btn-lg.btn-primary.btn-block(type='submit') Submit

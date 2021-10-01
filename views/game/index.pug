@@ -1,0 +1,142 @@
+extends ../layouts/admin
+
+append styles
+    link(href='/css/style.css', rel='stylesheet')
+block append content
+
+    form(id='total-game-edit-form', autocomplete="off")
+        div.panel.with-nav-tabs.panel-default
+            div.panel-heading
+                | Total question's Settings
+        div.panel-body
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtRewardQuestion") Tokens per question
+                div.col-sm-2.col-md-2
+                    input.form-control(type='text',id='txtRewardQuestion',value=game.rewardQuestion)
+
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtLimitQuestion") Limit of questions count per day
+                div.col-sm-2.col-md-2
+                    input.form-control(type='text',id='txtLimitQuestion',value=game.questionLimit)
+
+                label.col-sm-2.col-form-label.text-center(for="txtLimitQuestionText") Text for Limit questions count per day
+                div.col-sm-4.col-md-4
+                    textarea.form-control(type='text',id='txtLimitQuestionText')=game.questionLimitText
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtLimitCorrectQuestion") Limit of correct questions answer per day
+                div.col-sm-2.col-md-2
+                    input.form-control(type='text',id='txtLimitCorrectQuestion',value=game.questionCorrectLimit)
+
+                label.col-sm-2.col-form-label.text-center(for="txtLimitCorrectQuestionText") Text for Limit of correct questions
+                div.col-sm-4.col-md-4
+                    textarea.form-control(type='text',id='txtLimitCorrectQuestionText')=game.questionCorrectLimitText
+
+        input(type='hidden',id='txtId',value=game.id)
+
+        div.panel.with-nav-tabs.panel-default
+            div.panel-heading
+                | Total Plinko's Settings
+        div.panel-body
+            div.form-group.row
+                label.col-sm-2.col-md-2.col-form-label.text-center(for="txtCostPlinko") Tokens per play
+                div.col-sm-2.col-md-2
+                    input.form-control(type='number',id='txtCostPlinko' value=game.costPlinko)
+            div.form-group.row.game-rewards
+                label.col-sm-2.col-md-2.col-form-label.text-center Coins per win
+                each reward, index in game.rewardsPlinko
+                    div.col-sm-2.col-md-1
+                        input.form-control(type='number',id='txtRewardPlinko'+index,value=reward)
+        div.panel.with-nav-tabs.panel-default
+            div.panel-heading
+                | Registration Rewards
+        div.panel-body
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtRewardRegCoins") Coins
+                div.col-sm-2.col-md-2
+                    input.form-control(type='number',id='txtRewardRegCoins',value=game.regRewardCoins)
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtRewardRegTokens") Tokens
+                div.col-sm-2.col-md-2
+                    input.form-control(type='number',id='txtRewardRegTokens',value=game.regRewardTokens)
+            div.form-group.row
+                label.col-sm-2.col-form-label.text-center(for="txtRewardRegTickets") Tickets
+                div.col-sm-2.col-md-2
+                    input.form-control(type='number',id='txtRewardRegTickets',value=game.regRewardTickets)
+
+
+
+    div.form-group.row
+        div.col-sm-3.col-md-2
+            button.btn.btn-default.form-control(type="button",data-dismiss="modal", onclick="game_cancel()") Cancel
+        div.col-sm-3.col-md-2
+            button.btn.btn-success.form-control(onclick="game_save()") Save
+
+block append scripts
+    script(src='../js/games.js')
+    script(type='').
+        $('#dialog-game-save').on('show.bs.modal', function (e)
+        {
+            var sender = $(e.relatedTarget);
+
+            $('#txtId').val(sender.data('id'));
+            $('#txtName').val(sender.data('name'));
+            $('#txtPlayersLimit').val(sender.data('players-limit'));
+            $('#txtLimit').val(sender.data('limit'));
+            $('#txtJackpotLimit').val(sender.data('jackpot-limit'));
+            $('#txtHousehold').val(sender.data('household'));
+            $('#txtCost').val(sender.data('cost'));
+            $('#txtBeginAt').val(sender.data('begin-at'));
+            $('#txtNumbers').val(sender.data('numbers'));
+            $('#txtLimitQuestionText').val(sender.data("question-limit-text"));
+
+        });
+    script(type='').
+        $("#calendarAvailable").datetimepicker(
+        {
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-chevron-up",
+                down: "fa fa-chevron-down",
+                next: "fa fa-chevron-right",
+                previous: "fa fa-chevron-left"
+            }
+        });
+    script(type='').
+        $("#calendarBegin").datetimepicker(
+            {
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-chevron-up",
+                    down: "fa fa-chevron-down",
+                    next: "fa fa-chevron-right",
+                    previous: "fa fa-chevron-left"
+                }
+            });
+    script(type='text/javascript').
+        $(document).ready(function () {
+            $('#data').DataTable();
+        });
+    script(type='text/javascript').
+        $("input").on("change paste", function () {
+            if($(this).val().length == 0){
+                $(this).val(0);
+            }
+            else{
+                var num = parseInt($(this).val());
+                if(num < 0)
+                {
+                    $(this).val(0);
+                }
+                else {
+                    if($(this).attr('id')=="txtRewardRegTickets"){
+                        if(num > 200){
+                            $(this).val(200);
+                        }
+                    }
+                    else
+                        $(this).val(num);
+                }
+            }
+        });

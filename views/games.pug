@@ -1,0 +1,95 @@
+extends layouts/admin
+
+append styles
+    link(href='../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css', rel='stylesheet')
+block append content
+    button.btn.btn-sm.btn-success(type='button',
+    data-toggle="modal",
+    data-target="#dialog-game-save",
+    data-id='0',
+    data-begin-at='2017-12-09T18:50:00.000Z',
+    data-limit='1000',
+    data-cost='10') Create
+    .table-responsive
+        table.table.table-striped(id="data")
+            thead
+                tr
+                    th Limit
+                    th Sold
+                    th Jackpot
+                    th Begin At
+                    th Ticket Cost
+                    th Created
+                    th Updated
+                    th
+            tbody
+                for game in games
+                    tr
+                        td=game.limit
+                        td=game.sold
+                        td=game.jackpot
+                        td=timeago.format(game.beginAt)
+                        td=game.cost
+                        td=timeago.format(game.createdAt)
+                        td=timeago.format(game.updatedAt)
+                        td
+                            button.btn.btn-sm.btn-primary(type='button',data-toggle="modal",
+                            data-target="#dialog-game-save",data-id=game.id,data-limit=game.limit,
+                            data-cost=game.cost,data-begin-at=game.beginAt) Edit
+
+    +dialog('Game', 'dialog-game-save')
+        block dialogbody
+            form(id='game-edit-form')
+                +input("text","txtName","Name","Name")
+                select(id="txtNumbers")
+                    option 1
+                    option 2
+                    option 3
+                    option 4
+                    option 5
+                    option 6
+                    option 7
+                +input("text","txtLimit","Max Tickets","Max Tickets")
+                +input("text","txtCost","Ticket Cost","Ticket Cost")
+                label Available
+                #begindate.input-group.date-time
+                    input(id='txtAvailableAt').form-control
+                    span.input-group-addon
+                        span.fa.fa-calendar
+                label Begin
+                #begindate.input-group.date-time
+                    input(id='txtBeginAt').form-control
+                    span.input-group-addon
+                        span.fa.fa-calendar
+                input(type='hidden',id='txtId')
+        block footer
+            button.btn.btn-default(type="button",data-dismiss="modal") Cancel
+            button.btn.btn-danger(type="button",data-dismiss="modal",onclick="game_remove()") Remove
+            button.btn.btn-success(data-dismiss="modal",onclick="game_save()") Save
+
+block append scripts
+    script(src='../js/games.js')
+    script(src='../bower_components/moment/min/moment.min.js')
+    script(src='../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')
+    script(type='').
+        $('#dialog-game-save').on('show.bs.modal', function (e)
+        {
+            var sender = $(e.relatedTarget);
+
+            $('#txtId').val(sender.data('id'));
+            $('#txtLimit').val(sender.data('limit'));
+            $('#txtCost').val(sender.data('cost'));
+            $('#txtBeginAt').val(sender.data('begin-at'));
+        });
+    script(type='').
+        $("#begindate").datetimepicker(
+        {
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-chevron-up",
+                down: "fa fa-chevron-down",
+                next: "fa fa-chevron-right",
+                previous: "fa fa-chevron-left"
+            }
+        });

@@ -1,0 +1,5 @@
+extends layouts/admin
+
+block append content
+    - if (env == 'dev')
+    pre= error
