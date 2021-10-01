@@ -1,0 +1,31 @@
+extends ../layouts/admin
+
+block append content
+    .table-responsive
+        table.table.table-striped(id="data")
+            thead
+                tr
+                    th User Name
+                    th Last Login
+                    th Created
+                    th Country
+                    th(class=!canRevoke && admin==null?"hidden":"")
+            tbody
+                for user in users
+                    tr
+                        td=user.user_name
+                        td=timeago.format(user.lastLoginAt)
+                        td=timeago.format(user.createdAt)
+                        td USA
+                        td(class=!canRevoke && admin==null ? "hidden":"")
+                            button.btn.btn-sm.btn-danger(type='button' onclick="admin_remove('"+user.id+"')" class=!canRevoke && admin==null ?"hidden": admin==user.addToAdminId?"":canRevoke?"":"hidden") Remove
+
+
+
+block append scripts
+    script(src='../js/admins.js')
+    script(type='text/javascript').
+        $(document).ready(function () {
+            $('#data').DataTable();
+        });
+

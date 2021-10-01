@@ -1,0 +1,54 @@
+extends bootstrap
+
+include ../components/dialog
+
+append styles
+    link(href='/css/dashboard.css', rel='stylesheet')
+    link(href='/bower_components/select2/dist/css/select2.min.css',rel="stylesheet",type="text/css")
+    link(href='/bower_components/fontawesome/css/font-awesome.min.css', rel="stylesheet",type="text/css")
+    link(href='/bower_components/datatable/media/css/dataTables.bootstrap.min.css', rel="stylesheet",type="text/css")
+    link(href='/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css', rel='stylesheet')
+block body
+    nav.navbar.navbar-inverse.navbar-fixed-top
+        .container-fluid
+            .navbar-header
+                button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+                    span.sr-only Toggle navigation
+                    span.icon-bar
+                    span.icon-bar
+                    span.icon-bar
+                a.navbar-brand(href='/admin/dashboard')=pkg.description + ' (v' + pkg.version + ')'
+            #navbar.navbar-collapse.collapse
+                ul.nav.navbar-nav.navbar-right
+                    li
+                        a(href='#') Profile
+                    li
+                        a(href='/logout') Logout
+                form.navbar-form.navbar-right
+                    input.form-control(type='text', placeholder='Search...')
+    .container-fluid
+        .row
+            .col-sm-3.col-md-2.sidebar
+                ul.nav.nav-sidebar
+                    li(class=isActive('/admin/dashboard') ? 'active' : '')
+                        a(href='/admin/dashboard') Dashboard
+                    li(class=isActive('/admin/lotteries') ? 'active' : isActive('/admin/lotteries/actions'))
+                        a(href='/admin/lotteries') Lotteries
+                    li(class=isActive('/admin/games') ? 'active' : '')
+                        a(href='/admin/games') Games
+                    li(class=isActive('/admin/users') ? 'active' : '')
+                        a(href='/admin/users') Players
+                    li(class=isActive('/admin/questions') ? 'active' : '')
+                        a(href='/admin/questions') Questions
+                    li(class=isActive('/admin/notifications') ? 'active' : '')
+                        a(href='/admin/notifications') Notifications
+                    li(class=isActive('/admin/admins') ? 'active' : ''+ "")
+                        a(href='/admin/admins') Administrators
+            .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+                h1.page-header #{title}
+                block content
+block append scripts
+    script(src="/bower_components/datatable/media/js/jquery.dataTables.min.js", type="text/javascript")
+    script(src="/bower_components/datatable/media/js/dataTables.bootstrap.min.js", type="text/javascript")
+    script(src='/bower_components/moment/min/moment.min.js')
+    script(src='/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js')

@@ -1,0 +1,160 @@
+extends ../layouts/admin
+append styles
+    link( href='../css/jquery-ui.css' rel='stylesheet' type='text/css')
+block append content
+    .table-responsive
+        table.table.table-striped(id="data")
+            thead
+                tr
+                    th
+                        input(type='checkbox' name='select_all' id='user_select_all' onclick='select_all(this)')
+                        | Select
+                    th
+                    th Full Name
+                    th Username
+                    th Sign Up Date
+                    th Last Login
+                    th Tokens
+                    th Tickets
+                    th Coins
+                    th Questions
+                    th
+            tbody
+                for user,index in users
+                    tr(class=user.question_ids.length >= questions_count ? 'danger':'')
+                        td
+                            input(type='checkbox' name='user_select' value=user._id id='user_select')
+                        td=index+1
+                        td=user.first_name + " " + user.last_name
+                        td=user.user_name
+                        td=user.createdAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+                        td=user.lastLoginAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+                        td=user.tokens
+                        td=user.tickets
+                        td=user.coins
+                        td=user.question_ids.length.toString() + "/" + questions_count
+                        td
+                            button.btn.btn-sm.btn-danger(type='button',data-toggle="modal",
+                            data-target="#dialog-edit",
+                            data-id=user.id,
+                            data-first_name=user.first_name,
+                            data-last_name=user.last_name,
+                            data-date_birth=user.date_of_birth.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+                                .replace(/\d{2}\:\d{2}\:\d{2}/,'').trim(),
+                            data-email=user.email,
+                            data-sex=user.sex,
+                            data-state=user.state,
+                            data-city=user.city,
+                            data-zip=user.zip,
+                            data-coins=user.coins,
+                            data-tokens=user.tokens,
+                            data-address=user.address,
+                            data-phone=user.phone
+                            ) Edit
+    br
+    button.btn.btn-danger(type="button",data-dismiss="modal", onclick="remove_players()") Remove Selected Players
+    +dialog('Edit Player', 'dialog-edit')
+        block dialogbody
+            form(id='player-edit-form')
+                input(type='hidden', id='txtId')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtFirstName") First name
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtFirstName')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtLastName") Last name
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtLastName')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtEmail") Email
+                    div.col-sm-8
+                        input.form-control(type='email',id='txtEmail')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtPhone") Phone
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtPhone',class="bfh-phone", data-country="US")
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtDateBirth") DateBirth
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtDateBirth')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtSex") Sex
+                    div.col-sm-8
+                        select(id='txtSex' class='js-example-basic-single')
+                            option(value=1) Male
+                            option(value=2) Female
+                            option(value=0) None
+
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtAddress") Address
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtAddress')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtState") State
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtState')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtCity") City
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtCity')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtZip") Zip
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtZip')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtTokens") Tokens
+                    div.col-sm-8
+                        input.form-control(type='number',id='txtTokens')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtCoins") Coins
+                    div.col-sm-8
+                        input.form-control(type='number',id='txtCoins')
+        block footer
+            button.btn.btn-default(type="button",data-dismiss="modal") Cancel
+            button.btn.btn-danger(type="button",data-dismiss="modal", onclick="player_remove()") Remove
+            button.btn.btn-success(data-dismiss="modal",onclick="player_save()") Save
+            if canAddAdmin
+                button.btn.btn-warning(data-dismiss="modal",onclick="admin_add2()") Add To Admin
+block append scripts
+    script( src="../js/jquery-ui.js" type="text/javascript")
+    script( src="../bootstrapformhelpers/js/lang/en_US/bootstrap-formhelpers-phone.en_US.js")
+    script( src="../bootstrapformhelpers/js/bootstrap-formhelpers-phone.js" type="text/javascript")
+    script(src='../js/players.js')
+    script(src='../js/admins.js')
+    script(type='text/javascript').
+        $(document).ready(function () {
+            $('#data').DataTable({columnDefs: [ { orderable: false, targets: [0] }]});
+        });
+    script(type = 'text/javascript').
+        $('#dialog-edit').on('show.bs.modal', function (e)
+        {
+            var sender = $(e.relatedTarget);
+            $('#txtId').val(sender.data('id'));
+            $('#txtFirstName').val(sender.data('first_name'));
+            $('#txtLastName').val(sender.data('last_name'));
+            $('#txtDateBirth').val(sender.data('date_birth'));
+            $('#txtEmail').val(sender.data('email'));
+            $('#txtSex').val(sender.data('sex'));
+            $('#txtState').val(sender.data('state'));
+            $('#txtCity').val(sender.data('city'));
+            $('#txtZip').val(sender.data('zip'));
+            $('#txtCoins').val(sender.data('coins'));
+            $('#txtTokens').val(sender.data('tokens'));
+            $('#txtPhone').val(sender.data('phone'));
+            $('#txtAddress').val(sender.data('address'));
+        }
+
+        );
+
+    script(type = 'text/javascript').
+        $(function () {
+            $("#txtDateBirth").datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: '-100y:c+nn',
+                maxDate: '-1d'
+            });
+        });
+
+

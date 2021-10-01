@@ -1,0 +1,21 @@
+extends ../layouts/bootstrap
+
+append styles
+    // Custom styles for this template
+    link(href='../css/signin.css', rel='stylesheet')
+block body
+    .container
+        form.form-signin(method='post')
+            h2.form-signin-heading Please sign in
+            for message in messages
+                div.alert.alert-warning
+                    strong=message
+            label.sr-only(for='email') Email address
+            input#email.form-control(type='email',name='email', placeholder='Email address', required='', autofocus='')
+            label.sr-only(for='password') Password
+            input#password.form-control(type='password',name='password', placeholder='Password', required='')
+            .checkbox
+                label
+                    input(type='checkbox', value='remember-me')
+                    |  Remember me
+            button.btn.btn-lg.btn-primary.btn-block(type='submit') Sign in
