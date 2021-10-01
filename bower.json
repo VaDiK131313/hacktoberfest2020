@@ -1,0 +1,15 @@
+{
+  "name": "kaching",
+  "description": "Kaching Arcade Game Back Office Front View",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies":
+  {
+    "eonasdan-bootstrap-datetimepicker":"~4.17.47",
+    "bootstrap": "~3.3.7",
+    "fontawesome": "~4.7.0",
+    "jquery": "~3.2.1",
+    "select2": "~4.0.5",
+    "datatable": "~1.10.16"
+  }
+}
