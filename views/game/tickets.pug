@@ -1,0 +1,47 @@
+extends ../layouts/admin
+
+block append content
+    .table-responsive
+        table.table.table-striped(id="data")
+            thead
+                tr
+                    th
+                    th Numbers
+                    th Buyer
+                    th Won
+                    th Cost
+                    th Created
+                    th
+            tbody
+                for ticket,index in tickets
+                    tr
+                        td=index+1
+                        td=ticket.numbers
+                        td=ticket.owner.displayName
+                        td=ticket.won
+                        td=ticket.cost
+                        td=ticket.createdAt
+                        td
+                            button.btn.btn-sm.btn-danger(type='button',data-toggle="modal",
+                            data-target="#dialog-remove",data-id=ticket.id) Remove
+    +dialog('Remove Ticket', 'dialog-remove')
+        block dialogbody
+            form(id='ticket-remove-form')
+                input(type='hidden',id='txtId')
+            h2 Do you really want to remove this ticket?
+        block footer
+            button.btn.btn-default(type="button", data-dismiss="modal") Cancel
+            button.btn.btn-danger(type="button", data-dismiss="modal", onclick="ticket_remove()") Remove
+block append scripts
+    script(src='/js/games.js')
+    script(type='text/javascript').
+        $(document).ready(function () {
+            $('#data').DataTable();
+        });
+    script(type = 'text/javascript').
+        $('#dialog-remove').on('show.bs.modal', function (e) {
+            var sender = $(e.relatedTarget);
+
+            $('#txtId').val(sender.data('id'));
+        });
+

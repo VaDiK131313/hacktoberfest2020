@@ -1,0 +1,128 @@
+extends ../layouts/admin
+
+append styles
+
+block append content
+    ul.nav.nav-tabs
+        li
+            a(href="/admin/lotteries") Lotteries
+        li.active
+            a(href="#tab_actions" data-toggle="tab") Lottery actions
+    br
+    div.tab-content
+        div.tab-pane.fade.in.active(id="tab_actions")
+            div
+                button.btn.btn-sm.btn-success(type='button',
+                data-toggle="modal",
+                data-target="#dialog-actions-save",
+                data-id='0',
+                data-title="Title",
+                data-coins="1",
+                data-tokens="1",
+                data-tickets="1",
+                data-active= "1",
+                ) Create
+
+            br
+            .table-responsive
+                table.table.table-striped(id="data")
+                    thead
+                        tr
+                            th
+                            th Name
+                            th Coins
+                            th Tokens
+                            th Tickets
+                            th Created At
+                            th Last Update
+                            th Available
+                            th
+                    tbody
+                        for action,index in lottery_actions
+                            tr
+                                td=index+1
+                                td=action.title
+                                td=action.coins
+                                td=action.tokens
+                                td=action.tickets
+                                td=timeago.format(action.createdAt)
+                                td=timeago.format(action.updatedAt)
+                                td=action.active ? "Showing" : "Not Showing"
+                                td
+                                    button.btn.btn-sm.btn-primary(type='button', data-toggle="modal",
+                                    data-target="#dialog-actions-save",
+                                    data-id=action.id,
+                                    data-title=action.title,
+                                    data-coins=action.coins,
+                                    data-tokens=action.tokens,
+                                    data-tickets=action.tickets,
+                                    data-active=action.active ? 1:0,
+                                    ) Edit
+                                    button.btn.btn-sm.btn-danger(type='button',
+                                    onclick="action_remove_by_id('"+action.id+"')"
+                                    ) Remove
+
+    +dialog('Lottery Action', 'dialog-actions-save')
+        block dialogbody
+            form(id='actions-edit-form')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtTitle") Title
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtTitle')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtCoins") Coins
+                    div.col-sm-5
+                        input.form-control(type='number',id='txtCoins')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtTokens") Tokens
+                    div.col-sm-5
+                        input.form-control(type='number',id='txtTokens')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtTickets") Tickets
+                    div.col-sm-5
+                        input.form-control(type='number',id='txtTickets')
+                div.form-group.row(id='active-row')
+                    label.col-sm-4.col-form-label(for="txtActive") Status (On/Off)
+                    div.col-sm-5
+                        div(class="TriSea-technologies-Switch")
+                            input(id="txtActive" name="TriSea1" type="checkbox")
+                            label(for="txtActive" class="label-primary")
+
+                input(type='hidden',id='txtId')
+        block footer
+            button.btn.btn-default(type="button",data-dismiss="modal") Cancel
+            button.btn.btn-danger(type="button",data-dismiss="modal",onclick="action_remove()") Remove
+            button.btn.btn-success#action_save(data-dismiss="modal",onclick="action_save()") Save
+
+block append scripts
+    script(src='../../js/lotteriesactions.js')
+    script(type='').
+        $('#dialog-actions-save').on('show.bs.modal', function (e)
+        {
+            var sender = $(e.relatedTarget);
+
+            $('#txtId').val(sender.data('id'));
+            $('#txtTitle').val(sender.data('title'));
+            $('#txtCoins').val(sender.data('coins'));
+            $('#txtTokens').val(sender.data('tokens'));
+            $('#txtTickets').val(sender.data('tickets'));
+            $('#txtActive').prop('checked', (sender.data('active')==1 ? true : false));
+            if($("#txtId").val()=="0"){
+                $("#action_save").html("Create");
+            }else{
+                $("#action_save").html("Save");
+            }
+        });
+
+    script(type='text/javascript').
+        $(document).ready(function ()
+        {
+            $('#data').DataTable();
+            $('input[type="number"]').change(function () {
+                var number = parseInt($(this).val());
+
+                if (number < 0) {
+                    $('#txtTickets').val("0");
+                }
+            });
+        });

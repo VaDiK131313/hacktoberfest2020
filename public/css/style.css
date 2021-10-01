@@ -1,0 +1,29 @@
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.game-rewards .col-md-10, .game-rewards .col-md-11,
+.game-rewards .col-md-12, .game-rewards .col-md-2,
+.game-rewards .col-md-3, .game-rewards .col-md-4,
+.game-rewards .col-md-5, .game-rewards .col-md-6,
+.game-rewards .col-md-7, .game-rewards .col-md-8,
+.game-rewards .col-md-9, .game-rewards .col-sm-1,
+.game-rewards .col-sm-10, .game-rewards .col-sm-11,
+.game-rewards .col-sm-12, .game-rewards .col-sm-2,
+.game-rewards .col-sm-3, .game-rewards .col-sm-4,
+.game-rewards .col-sm-5, .game-rewards .col-sm-6,
+.game-rewards .col-sm-7, .game-rewards .col-sm-8,
+.game-rewards .col-sm-9, .game-rewards .col-xs-1,
+.game-rewards .col-xs-10, .game-rewards.col-xs-11,
+.game-rewards .col-xs-12, .game-rewards .col-xs-2,
+.game-rewards .col-xs-3, .game-rewards .col-xs-4,
+.game-rewards .col-xs-5, .game-rewards .col-xs-6,
+.game-rewards .col-xs-7,  .game-rewards.col-xs-8,
+.game-rewards .col-xs-9 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 0;
+}

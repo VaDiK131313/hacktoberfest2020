@@ -1,0 +1,24 @@
+extends layouts/admin
+
+block append content
+
+    h1.text-center Welcome
+    h2.sub-header Last Active Users
+    .table-responsive
+        table.table.table-striped
+            thead
+                tr
+                    th ID
+                    th User Name
+                    th Email
+                    th Name
+                    th Last Login
+            tbody
+                for user in users
+                    tr
+                        td=user.id
+                        td=user.user_name
+                        td=user.email
+                        td=user.first_name + " " + user.last_name
+                        td=user.lastLoginAt.toISOString().replace(/T/, ' ').replace(/\..+/, '')
+

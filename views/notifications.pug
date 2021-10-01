@@ -1,0 +1,432 @@
+extends layouts/admin
+
+append styles
+    link(href='../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css', rel='stylesheet')
+block append content
+    ul.nav.nav-tabs
+        li.active
+            a(href="#tab_templates" data-toggle="tab") Templates
+        li
+            a(href="#tab_notifications" data-toggle="tab") Custom Notifications
+    div.tab-content
+        div.tab-pane.fade.in.active(id="tab_templates")
+            br
+            div.table-responsive
+                table.table.table-striped(id="data")
+                    thead
+                        tr
+                            th
+                            th Template
+                            th Created at
+                            th Status
+                            th Coins
+                            th Tokens
+                            th Tickets
+                            th
+                    tbody
+                        for template,index in template_notifications
+                            tr
+                                td=index+1
+                                td=template.title
+                                td=timeago.format(template.createdAt)
+                                td=template.type == "template_custom" ? "" : template.active ? "ON" : "OFF"
+                                td=template.coins
+                                td=template.tokens
+                                td=template.tickets
+                                td
+                                    button.btn.btn-sm.btn-primary(type='button', data-toggle="modal",
+                                    data-target="#dialog-game-save",
+                                    data-id=template.id,
+                                    data-title=template.title,
+                                    data-message=template.message,
+                                    data-coins=template.coins,
+                                    data-tokens=template.tokens,
+                                    data-tickets=template.tickets,
+                                    data-active=template.active ? 1 : 0,
+                                    data-type=template.type,
+                                    data-push-title=template.pushTitle,
+                                    data-push-body=template.pushBody,
+
+                                    style="width: 57px"
+                                    )=template.type == "template_custom" ? "Create" : " Edit "
+
+        div.tab-pane.fade(id="tab_notifications")
+            br
+            div
+                button.btn.btn-sm.btn-primary(type='button', data-toggle="modal",
+                data-target="#dialog-game-save",
+                data-id=custom_template_notification.id,
+                data-title=custom_template_notification.title,
+                data-message=custom_template_notification.message,
+                data-coins=custom_template_notification.coins,
+                data-tokens=custom_template_notification.tokens,
+                data-tickets=custom_template_notification.tickets,
+                data-active=custom_template_notification.active ? 1 : 0,
+                data-type=custom_template_notification.type,
+                data-push-title=custom_template_notification.pushTitle,
+                data-push-body=custom_template_notification.pushBody,
+                ) Create
+            br
+            div.table-responsive
+                table.table.table-striped(id="data_notifications")
+                    thead
+                        tr
+                            th
+                            th Name
+                            th Created at
+                            th Coins
+                            th Tokens
+                            th Tickets
+                            th
+                    tbody
+                        for template,index in custom_notifications
+                            tr
+                                td=index+1
+                                td=template.title
+                                td=timeago.format(template.createdAt)
+                                td=template.coins
+                                td=template.tokens
+                                td=template.tickets
+                                td
+                                    button.btn.btn-sm.btn-primary(type='button', data-toggle="modal",
+                                    data-target="#dialog-game-save",
+                                    data-id=template.id,
+                                    data-title=template.title,
+                                    data-message=template.message,
+                                    data-coins=template.coins,
+                                    data-tokens=template.tokens,
+                                    data-tickets=template.tickets,
+                                    data-active=template.active ? 1 : 0,
+                                    data-type=template.type,
+                                    data-receivers=template.receivers,
+                                    data-actions=template.actions_ids,
+                                    data-begin-at=template.beginAt!=null ? template.beginAtStr : "",
+                                    data-begin-atstr=template.beginAtStr,
+                                    data-push-title=template.pushTitle,
+                                    data-push-body=template.pushBody,
+                                    style="width: 57px"
+                                    ) Info
+
+
+
+    +dialog('Notification', 'dialog-game-save')
+        block dialogbody
+            form(id='game-edit-form')
+                div.form-group.row#titleField
+                    label.col-sm-4.col-form-label(for="txtTitle") Title
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtTitle')
+                div.form-group.row#messageField
+                    label.col-sm-4.col-form-label(for="txtMessage") Message
+                    div.col-sm-8
+                        textarea.form-control(type='text',id='txtMessage',rows="5")
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtPushTitle") Push-Notification Title
+                    div.col-sm-8
+                        input.form-control(type='text',id='txtPushTitle')
+                div.form-group.row
+                    label.col-sm-4.col-form-label(for="txtPushBody") Push-Notification Message
+                    div.col-sm-8
+                        textarea.form-control(type='text',id='txtPushBody',rows="5")
+                div.form-group.row#selected_actions
+                    label.col-sm-4.col-form-label Select Action
+                    div.col-sm-8
+                        button.btn.btn-success(type="button",data-toggle="modal",
+                            data-target="#dialog-actions-select",onclick="get_actions()",id="select_actions") Select Lottery actions
+                        div#selected_count
+
+                div.form-group.row
+                    label.col-sm-4.col-form-label Rewards
+                    div.col-sm-4
+                        div.input-group
+                            input.form-control(type='number',id='txtCoins')
+                            span.input-group-addon &nbspCoins&nbsp
+                        div.input-group
+                            input.form-control(type='number',id='txtTokens')
+                            span.input-group-addon Tokens
+                        div.input-group
+                            input.form-control(type='number',id='txtTickets')
+                            span.input-group-addon Tickets
+                div.form-group.row(id='active-row')
+                    label.col-sm-4.col-form-label(for="txtActive") Status (On/Off)
+                    div.col-sm-5
+                        div(class="TriSea-technologies-Switch")
+                            input(id="txtActive" name="TriSea1" type="checkbox")
+                            label(for="txtActive" class="label-primary")
+                div.form-group.row(id='begin-row')
+                    label.col-sm-4.col-form-label(for="txtBeginAt") Begin
+                    div.col-sm-8
+                        #calendarBegin.input-group.date-time
+                            input(id='txtBeginAt',readonly=true).form-control
+                            span.input-group-addon
+                                span.fa.fa-calendar
+                input(id="txtId" type="hidden")
+                input(id="txtType" type="hidden")
+                input(id="txtReceivers",type='hidden')
+                input(id="txtActions",type='hidden')
+        block footer
+            button.btn.btn-default(type="button",data-dismiss="modal") Cancel
+            button.btn.btn-danger(type="button",data-dismiss="modal",onclick="notification_remove()",id='remove-button') Remove
+            button.btn.btn-success(data-dismiss="modal",onclick="notification_save()",id='save-button') Save
+            button.btn.btn-success(type="button",data-toggle="modal",
+                                    data-target="#dialog-users-select",onclick="get_users()",id="select_users") Select Users
+
+    div.modal.fade(id="dialog-users-select",
+                    tabindex="-2",
+                    role="dialog",
+                    aria-labelledby="dialog-users-selectLabel",
+                    aria-hidden="true",
+                    style="display: none;")
+        div.modal-dialog.modal-user
+            div.modal-content
+                div.modal-header
+                    button.close(type="button" data-dismiss="modal")
+                        span(aria-hidden="true") ×
+                        span.sr-only Close
+                    h4.modal-title(id="dialog-users-selectLabel") Select users
+                div.modal-body
+                    div.body
+                        div
+                            button.btn.btn-success(type="button" data-toggle="modal" onclick="get_users()") Refresh List
+                        br
+                        .table-responsive
+                            table.table.table-striped(id="data_users")
+                                thead
+                                    tr
+                                        th
+                                            input(type='checkbox' name='select_all' id='user_select_all' onclick='select_all(this)')
+                                            | Select
+                                        th
+                                        th Full Name
+                                        th Username
+                                        th Sign Up Date
+                                        th Last Login
+                                        th Tokens
+                                        th Tickets
+                                        th Coins
+                                        th Questions
+                                tbody
+
+                div.modal-footer
+                    div.footer
+                        button.btn.btn-default(type="button" data-dismiss="modal") Cancel
+                        button.btn.btn-success(data-dismiss="modal" onclick="notification_save()",id='send_custom',disabled) Send
+    div.modal.fade(id="dialog-actions-select",
+        tabindex="-3",
+        role="dialog",
+        aria-labelledby="dialog-actions-selectLabel",
+        aria-hidden="true",
+        style="display: none;")
+        div.modal-dialog.modal-user
+            div.modal-content
+                div.modal-header
+                    button.close(type="button" data-dismiss="modal")
+                        span(aria-hidden="true") ×
+                        span.sr-only Close
+                    h4.modal-title(id="dialog-actions-selectLabel") Select Actions
+                div.modal-body
+                    div.body
+                        div
+                            button.btn.btn-success(type="button" data-toggle="modal" onclick="get_actions()") Refresh List
+                        br
+                        .table-responsive
+                            table.table.table-striped(id="data_actions")
+                                thead
+                                    tr
+                                        th
+                                            input(type='checkbox' name='select_all' id='action_select_all' onclick='select_all_actions(this)')
+                                            | Select
+                                        th
+                                        th Title
+                                        th Coins
+                                        th Tokens
+                                        th Tickets
+
+                                tbody
+
+                div.modal-footer
+                    div.footer
+                        button.btn.btn-default(type="button" data-dismiss="modal") Cancel
+                        button.btn.btn-success(data-dismiss="modal" onclick="actions_select()",id='select_action_total') Select
+
+
+block append scripts
+    script(src='../js/notifications.js')
+    script(type='').
+        $('#dialog-game-save').on('show.bs.modal', function (e)
+        {
+            var sender = $(e.relatedTarget);
+
+            $('#txtId').val(sender.data('id'));
+            $('#txtTitle').val(sender.data('title'));
+            $('#txtMessage').val(sender.data('message'));
+            $('#txtCoins').val(sender.data('coins'));
+            $('#txtTokens').val(sender.data('tokens'));
+            $('#txtTickets').val(sender.data('tickets'));
+            $('#txtType').val(sender.data('type'));
+            //$('#txtBeginAt').val(sender.data('begin-at'));
+            console.log(sender.data('push-title'));
+            $('#txtPushTitle').val(sender.data('push-title'));
+            $('#txtPushBody').val(sender.data('push-body'));
+            if(sender.data('receivers')!=null)
+                $('#txtReceivers').val(JSON.stringify(sender.data('receivers')));
+            else $('#txtReceivers').val("[]");
+            if (sender.data('actions') != null){
+                $("#selected_count").text("Selected: "+sender.data('actions').length);
+                $('#txtActions').val(JSON.stringify(sender.data('actions')));
+            }
+
+            else {
+                $("#selected_count").text("");
+                $('#txtActions').val("[]");
+            }
+
+            $('#txtActive').prop('checked', (sender.data('active')==1 ? true : false));
+            if(sender.data('type')!='custom'){
+                $('#remove-button').hide();
+                $('#txtTitle').prop('disabled', false);
+                $('#txtMessage').prop('disabled', false);
+                $('#txtCoins').prop('disabled', false);
+                $('#txtTokens').prop('disabled', false);
+                $('#txtTickets').prop('disabled', false);
+                $('#txtPushTitle').prop('disabled', false);
+                $('#txtPushBody').prop('disabled', false);
+            }
+            else {
+                $('#remove-button').show();
+                $('#txtTitle').prop('disabled', true);
+                $('#txtMessage').prop('disabled', true);
+                $('#txtCoins').prop('disabled', true);
+                $('#txtTokens').prop('disabled', true);
+                $('#txtTickets').prop('disabled', true);
+                $('#txtPushTitle').prop('disabled', true);
+                $('#txtPushBody').prop('disabled', true);
+            }
+            if (sender.data('type') == 'nologin_3days' ||
+                sender.data('type') == 'nologin_week' ||
+                sender.data('type') == 'nologin_month' ||
+                sender.data('type') == 'lottery_win'
+
+            ) {
+                //$('#titleField').hide();
+                $('#messageField').hide();
+
+
+            }else{
+                //$('#titleField').show();
+                $('#messageField').show();
+
+            }
+            if(sender.data('type')!='template_custom' && sender.data('type')!='custom' ){
+                $('#save-button').show();
+                $('#select_users').hide();
+                $('#active-row').show();
+                $('#begin-row').hide();
+                $('#selected_actions').hide();
+
+            }
+            else {
+                $('#save-button').hide();
+                $('#select_users').show();
+                $('#active-row').hide();
+                $('#begin-row').show();
+                $('#selected_actions').show();
+                if(sender.data('type')=='custom') {
+                    $('#select_users').text("Show Receivers");
+                    $('#select_actions').text("Selected Lottery Actions");
+                }
+                else {
+                    $('#select_users').text("Select Users");
+                    $('#select_actions').text("Select Lottery Actions");
+
+                }
+                if (sender.data('begin-at') == null) {
+                    $('#txtBeginAt').val(new Date().toLocaleDateString('en-us',
+                        {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                        }
+                    ));
+                }
+                else{
+                    var str = sender.data('begin-at');
+                    console.log(str);
+                    if(str.length > 0 && str.indexOf("T") !=-1 ) {
+                        var data = new Date(str);
+                        //alert(data);
+                        $('#txtBeginAt').val(data.toLocaleDateString('en-us',
+                            {
+                                year: "numeric",
+                                month: "numeric",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            }
+                        ));
+                    }else{
+                        $('#txtBeginAt').val(str);
+                    }
+                }
+            }
+        }
+
+        );
+    script(type="text/javascript").
+        $('#dialog-users-select').on('show.bs.modal', function (e) {
+            var sender = $(e.relatedTarget);
+
+        });
+    script(type="text/javascript").
+        $("input[name='user_select']").click(function () {
+            alert("dfgdfg");
+        });
+    script(type='text/javascript').
+        $(document).ready(function ()
+        {
+            $('#data').DataTable();
+            $('#data_notifications').DataTable({"lengthMenu": [[50,10, 25,  -1], [50,10, 25, "All"]]});
+            $('#data_users').DataTable({columnDefs: [ { orderable: false, targets: [0] }],"lengthMenu": [[50,10, 25,  -1], [50,10, 25, "All"]]});
+            $("#TxtRepeat").change(function () {
+                alert("Handler for .change() called.");
+            });
+            $('#txtTickets').change(function(){
+               var number = parseInt($('#txtTickets').val());
+               if(number > 1000)
+               {
+                   $('#txtTickets').val("1000");
+               }
+                if (number < 0) {
+                    $('#txtTickets').val("0");
+                }
+            });
+            $('#txtCoins').change(function(){
+               var number = parseInt($('#txtCoins').val());
+
+                if (number < 0) {
+                    $('#txtCoins').val("0");
+                }
+            });
+            $('#txtTokens').change(function(){
+               var number = parseInt($('#txtTokens').val());
+
+                if (number < 0) {
+                    $('#txtTokens').val("0");
+                }
+            });
+        });
+    script(type='').
+        $("#calendarBegin").datetimepicker(
+            {
+                ignoreReadonly: true,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-chevron-up",
+                    down: "fa fa-chevron-down",
+                    next: "fa fa-chevron-right",
+                    previous: "fa fa-chevron-left"
+                }
+            });
