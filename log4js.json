@@ -1,0 +1,7 @@
+{
+  "appenders": { "server": { "type": "console"} },
+  "categories": {
+    "default": { "appenders": ["server"], "level": "debug" },
+    "http": { "appenders": ["server"], "level": "info" }
+  }
+}
